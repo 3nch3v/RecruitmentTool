@@ -6,6 +6,8 @@
     using RecruitmentTool.Data.Models;
     using RecruitmentTool.WebApi.Models;
     using RecruitmentTool.WebApi.Models.Dtos.Candidate;
+    using RecruitmentTool.WebApi.Models.Dtos.Interview;
+    using RecruitmentTool.WebApi.Models.Dtos.Job;
     using RecruitmentTool.WebApi.Models.Dtos.Recruiter;
     using RecruitmentTool.WebApi.Models.Dtos.Skills;
 
@@ -13,11 +15,9 @@
     {
         public ModelsMappings()
         {
-            //CreateMap<TSource, TDestination>().ReverseMap();
             CreateMap<QueryParameters, QueryParams>().ReverseMap();
 
             //Skills mappings
-
             CreateMap<Skill, SkillDto>().ReverseMap();
             CreateMap<CreateSkillDto, Skill>().ReverseMap();
 
@@ -30,6 +30,12 @@
             //Recruiter mappings
             CreateMap<CreateRecruiterDto, Recruiter>().ReverseMap();
             CreateMap<Recruiter, RecruiterDto>().ReverseMap();
+
+            //Interview mappings
+            CreateMap<Interview, InterviewDto>().ReverseMap();
+
+            //Job mappings
+            CreateMap<Job, JobDto>().ReverseMap();
         }
     }
 }

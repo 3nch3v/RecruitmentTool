@@ -9,6 +9,7 @@
         public Job()
         {
             Skills = new HashSet<Skill>();
+            Interviews = new HashSet<Interview>();
         }
 
         public int Id { get; set; }
@@ -24,5 +25,7 @@
         public decimal Salary { get; set; }
 
         public virtual ICollection<Skill> Skills { get; set; }
+
+        public virtual ICollection<Interview> Interviews { get; set; }
     }
 }

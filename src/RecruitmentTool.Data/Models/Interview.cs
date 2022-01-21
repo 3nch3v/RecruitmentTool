@@ -14,6 +14,10 @@
 
         public virtual Candidate Candidate { get; set; }
 
+        public int JobId { get; set; }
+
+        public virtual Job Job { get; set; }
+
         public DateTime Date { get; set; }
     }
 }

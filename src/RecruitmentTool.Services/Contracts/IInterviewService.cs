@@ -6,8 +6,6 @@
     {
         int Count();
 
-        Interview GetById(int id);
-
         ICollection<Interview> GetAll<T>(T queryParameters);
     }
 }

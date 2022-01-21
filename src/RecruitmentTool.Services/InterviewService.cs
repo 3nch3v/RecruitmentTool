@@ -12,6 +12,8 @@
 
     public class InterviewService : IInterviewService
     {
+        private int count = 0;
+
         private readonly IMapper mapper;
         private readonly RecruitmentToolDbContext dbContext;
 
@@ -21,10 +23,7 @@
             this.dbContext = dbContext;
         }
 
-        public int Count()
-        {
-            return dbContext.Interviews.Count();
-        }
+        public int Count() => count;
 
         public ICollection<Interview> GetAll<T>(T queryParameters)
         {
@@ -45,6 +44,8 @@
                     .OrderBy(queryParams.OrderByProp, queryParams.IsDescending)
                     .AsQueryable();
             }
+
+            count = interviesQuery.Count();
 
             var toReturn = interviesQuery
                 .Skip((queryParams.Page - 1) * queryParams.PageSize)

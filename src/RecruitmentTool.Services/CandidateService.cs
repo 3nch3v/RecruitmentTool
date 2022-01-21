@@ -63,7 +63,7 @@
 
             try
             {
-                dbContext.Remove(candidate);
+                dbContext.Candidates.Remove(candidate);
                 dbContext.SaveChanges();
                 return true;
             }

@@ -6,10 +6,10 @@
     using AutoMapper;
 
     using RecruitmentTool.Services.Contracts;
-    using RecruitmentTool.WebApi.Infrastructure.ServiceExtensions;
     using RecruitmentTool.WebApi.Models;
     using RecruitmentTool.WebApi.Models.Dtos.Recruiter;
     using RecruitmentTool.WebApi.Infrastructure.ControllerHelpers;
+    using RecruitmentTool.WebApi.Infrastructure.ServiceExtensions;
 
     [ApiController]
     [ApiVersion("1.0")]

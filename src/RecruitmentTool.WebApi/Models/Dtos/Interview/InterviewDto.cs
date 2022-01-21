@@ -5,8 +5,6 @@
 
     public class InterviewDto
     {
-        public int Id { get; set; }
-
         public CandidateDto Candidate { get; set; }
 
         public JobDto Job { get; set; }

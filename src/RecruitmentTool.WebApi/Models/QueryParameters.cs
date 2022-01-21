@@ -8,6 +8,10 @@ namespace RecruitmentTool.WebApi.Models
 
         public int Page { get; set; } = 1;
 
+        public string Query { get; set; }
+
+        public string OrderBy { get; set; }
+
         public int PageSize
         {
             get 
@@ -16,12 +20,8 @@ namespace RecruitmentTool.WebApi.Models
             }
             set 
             { 
-                pageSize = (value > MaxPageSize) ? MaxPageSize : value; 
+                pageSize = value > MaxPageSize ? MaxPageSize : value; 
             }
         }
-        
-        public string Query { get; set; }
-
-        public string OrderBy { get; set; }
     }
 }

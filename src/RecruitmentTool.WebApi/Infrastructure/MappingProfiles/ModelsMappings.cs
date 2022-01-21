@@ -36,6 +36,7 @@
 
             //Job mappings
             CreateMap<Job, JobDto>().ReverseMap();
+            CreateMap<CreateJobDto, Job>().ReverseMap();
         }
     }
 }

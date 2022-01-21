@@ -10,7 +10,7 @@
 
         Job GetById(int id);
 
-        Job Create<T>(T jobDto);
+        Task<Job> Create<T>(T jobDto);
 
         ICollection<Job> GetAll<T>(T queryParameters);
     }

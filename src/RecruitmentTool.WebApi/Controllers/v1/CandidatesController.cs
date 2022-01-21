@@ -6,10 +6,10 @@
     using AutoMapper;
 
     using RecruitmentTool.Services.Contracts;
-    using RecruitmentTool.WebApi.Infrastructure.ServiceExtensions;
     using RecruitmentTool.WebApi.Models;
     using RecruitmentTool.WebApi.Models.Dtos.Candidate;
     using RecruitmentTool.WebApi.Infrastructure.ControllerHelpers;
+    using RecruitmentTool.WebApi.Infrastructure.ServiceExtensions;
 
     [ApiController]
     [ApiVersion("1.0")]
@@ -40,10 +40,12 @@
                 throw new Exception("Creating a candidate failed.");
             }
 
+            var candidateDto = mapper.Map<CandidateDto>(newCandidate);
+
             return CreatedAtRoute(
                 nameof(GetCandidate),
                 new { version = version.ToString(), id = newCandidate.Id },
-                mapper.Map<CandidateDto>(newCandidate));
+                candidateDto);
         }
 
         [HttpGet]

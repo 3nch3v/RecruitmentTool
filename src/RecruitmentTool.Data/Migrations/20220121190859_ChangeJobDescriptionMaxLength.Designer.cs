@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RecruitmentTool.Data;
 
@@ -11,9 +12,10 @@ using RecruitmentTool.Data;
 namespace RecruitmentTool.Data.Migrations
 {
     [DbContext(typeof(RecruitmentToolDbContext))]
-    partial class RecruitmentToolDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220121190859_ChangeJobDescriptionMaxLength")]
+    partial class ChangeJobDescriptionMaxLength
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

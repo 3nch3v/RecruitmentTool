@@ -30,9 +30,9 @@
                          
         public const int JobTitleMaxLength = 100;
 
-        public const int JobDescriptionMaxLength = 20;
+        public const int JobDescriptionMinLength = 20;
                          
-        public const int JobDescriptionMinLength = 2000;
+        public const int JobDescriptionMaxLength = 2000;
 
         public const int MaxInterviewsCount = 5;
     }

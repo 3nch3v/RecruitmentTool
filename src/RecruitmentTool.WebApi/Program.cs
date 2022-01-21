@@ -10,10 +10,10 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using Newtonsoft.Json.Serialization;
 
 using RecruitmentTool.Data;
+using RecruitmentTool.Services;
+using RecruitmentTool.Services.Contracts;
 using RecruitmentTool.WebApi.Infrastructure;
 using RecruitmentTool.WebApi.Infrastructure.ServiceExtensions;
-using RecruitmentTool.Services.Contracts;
-using RecruitmentTool.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

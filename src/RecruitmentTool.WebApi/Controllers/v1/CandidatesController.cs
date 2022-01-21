@@ -3,7 +3,6 @@
     using System.Text.Json;
 
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.JsonPatch;
     using AutoMapper;
 
     using RecruitmentTool.Services.Contracts;
@@ -31,15 +30,8 @@
         }
 
         [HttpPost(Name = nameof(AddCandidate))]
-        public async Task<ActionResult<CandidateDto>> AddCandidate(
-            ApiVersion version, 
-            [FromBody] CreateCandidateDto candidateCreatedto)
+        public async Task<ActionResult<CandidateDto>> AddCandidate(ApiVersion version, [FromBody] CreateCandidateDto candidateCreatedto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var newCandidate = await candidateService.CreateAsync(candidateCreatedto);
 
             if (newCandidate == null)
@@ -68,7 +60,8 @@
         }
 
         [HttpGet(Name = nameof(GetAllCandidates))]
-        public ActionResult GetAllCandidates(ApiVersion version, [FromQuery] QueryParameters queryParameters)
+        public ActionResult GetAllCandidates(
+            ApiVersion version, [FromQuery] QueryParameters queryParameters)
         {
             var candidates = candidateService.GetAll(queryParameters);
             var candidatesDto = mapper.Map<ICollection<CandidateDto>>(candidates);
@@ -121,11 +114,6 @@
         [Route("{id}", Name = nameof(UpdateCandidate))]
         public ActionResult<CandidateDto> UpdateCandidate(string id, [FromBody] UpdateCandidateDto candidateDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var existingCandidate = candidateService.GetById(id);
 
             if (existingCandidate == null)
@@ -135,7 +123,7 @@
 
             var succseed = candidateService.Update(id, candidateDto);
 
-            if (succseed)
+            if (!succseed)
             {
                 throw new Exception("Updating a candidate failed on save.");
             }
@@ -144,9 +132,9 @@
         }
 
         [HttpPatch("{id}", Name = nameof(PartiallyUpdateCandidate))]
-        public ActionResult<CandidateDto> PartiallyUpdateCandidate(string id, [FromBody] JsonPatchDocument<UpdateCandidateDto> patchDoc)
+        public ActionResult<CandidateDto> PartiallyUpdateCandidate(string id, [FromBody] PartiallyUpdateCandidateDto candidateInput)
         {
-            if (patchDoc == null)
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
@@ -158,18 +146,7 @@
                 return NotFound();
             }
 
-            var candidateDto = mapper.Map<UpdateCandidateDto>(existingCandidate);
-
-            patchDoc.ApplyTo(candidateDto);
-
-            TryValidateModel(candidateDto);
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var succseed = candidateService.Update(id, candidateDto);
+            var succseed = candidateService.UpdatePartially(id, candidateInput);
 
             if (!succseed)
             {
@@ -254,13 +231,6 @@
             links.Add(
               new LinkDto(getLink, "self", "GET"));
 
-            var deleteLink = urlHelper.Link(nameof(RemoveCandidate), new { version = version.ToString(), id = id });
-
-            links.Add(
-              new LinkDto(deleteLink,
-              "delete_candidate",
-              "DELETE"));
-
             var createLink = urlHelper.Link(nameof(AddCandidate), new { version = version.ToString() });
 
             links.Add(
@@ -274,6 +244,13 @@
                new LinkDto(updateLink,
                "update_candidate",
                "PUT"));
+
+            var deleteLink = urlHelper.Link(nameof(RemoveCandidate), new { version = version.ToString(), id = id });
+
+            links.Add(
+              new LinkDto(deleteLink,
+              "delete_candidate",
+              "DELETE"));
 
             return links;
         }

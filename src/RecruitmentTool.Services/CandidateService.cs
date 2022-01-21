@@ -106,39 +106,70 @@
         public bool Update<T>(string id, T candidateDto)
         {
             var candidateInput = mapper.Map<Candidate>(candidateDto);
+            var candidate = GetById(id);
+
+            candidate.FirstName = candidateInput.FirstName;
+            candidate.LastName = candidateInput.LastName;
+            candidate.Email = candidateInput.Email;
+            candidate.Bio = candidateInput.Bio;
+            candidate.Birthday = candidateInput.Birthday;
+
+            candidate.RecruiterId = null;
+            SetRecruiter(candidateInput.Recruiter, candidate);
+
+            candidate.Skills.Clear();
+            SetSkills(candidateInput, candidate);
+
+            var isSuccseed = dbContext.SaveChanges() >= 0;
+
+            return isSuccseed;
+        }
+
+        public bool UpdatePartially<T>(string id, T candidateDto)
+        {
+            var candidateInput = mapper.Map<Candidate>(candidateDto);
             var existingCandidate = GetById(id);
 
-            if (existingCandidate.FirstName != candidateInput.FirstName)
+            if (candidateInput.FirstName != null 
+                && existingCandidate.FirstName != candidateInput.FirstName)
             {
                 existingCandidate.FirstName = candidateInput.FirstName;
             }
 
-            if (existingCandidate.LastName != candidateInput.LastName)
+            if (candidateInput.LastName != null
+                && existingCandidate.LastName != candidateInput.LastName)
             {
                 existingCandidate.LastName = candidateInput.LastName;
             }
 
-            if (existingCandidate.Bio != candidateInput.Bio)
+            if (candidateInput.Bio != null
+                && existingCandidate.Bio != candidateInput.Bio)
             {
                 existingCandidate.Bio = candidateInput.Bio;
             }
 
-            if (existingCandidate.Email != candidateInput.Email)
+            if (candidateInput.Email != null
+                && existingCandidate.Email != candidateInput.Email)
             {
                 existingCandidate.Email = candidateInput.Email;
             }
 
-            if (DateTime.Compare(existingCandidate.Birthday, candidateInput.Birthday) != 0)
+            if (DateTime.Compare(candidateInput.Birthday, new DateTime()) > 0
+                && DateTime.Compare(existingCandidate.Birthday, candidateInput.Birthday) != 0)
             {
                 existingCandidate.Birthday = candidateInput.Birthday;
             }
 
-            if (existingCandidate.Recruiter.Email != candidateInput.Recruiter.Email)
+            if (candidateInput.Recruiter  != null
+                && (existingCandidate.Recruiter.Email != candidateInput.Recruiter.Email))
             {
                 SetRecruiter(candidateInput.Recruiter, existingCandidate);
             }
 
-            SetSkills(candidateInput, existingCandidate);
+            if (candidateInput.Skills.Any())
+            {
+                SetSkills(candidateInput, existingCandidate);
+            }
 
             var isSuccseed = dbContext.SaveChanges() >= 0;
             return isSuccseed;

@@ -8,31 +8,25 @@
 
     using static RecruitmentTool.Common.GlobalConstants;
 
-    public class CreateCandidateDto
+    public class PartiallyUpdateCandidateDto
     {
-        [Required]
         [StringLength(NameMaxLength, MinimumLength = NameMinLength)]
         public string FirstName { get; set; }
 
-        [Required]
         [StringLength(NameMaxLength, MinimumLength = NameMinLength)]
         public string LastName { get; set; }
 
-        [Required]
         [StringLength(EmailMaxLength, MinimumLength = EmailMinLength)]
         public string Email { get; set; }
 
-        [Required]
         [StringLength(BioMaxLength, MinimumLength = BioMinLength)]
         public string Bio { get; set; }
 
         [BirthDate]
         public DateTime Birthday { get; set; }
 
-        [Required]
         public CreateRecruiterDto Recruiter { get; set; }
 
-        [SkillsCount]
         public ICollection<CreateSkillDto> Skills { get; set; }
     }
 }

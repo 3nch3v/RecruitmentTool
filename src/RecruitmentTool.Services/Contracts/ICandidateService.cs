@@ -10,6 +10,8 @@
 
         bool Update<T>(string id, T candidateDto);
 
+        bool UpdatePartially<T>(string id, T candidateDto);
+
         Candidate GetById(string id);
 
         Task<Candidate> CreateAsync<T>(T candidateDto);

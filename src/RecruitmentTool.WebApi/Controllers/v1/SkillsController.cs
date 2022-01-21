@@ -30,20 +30,6 @@
         }
 
         [HttpGet]
-        [Route("{id:int}", Name = nameof(GetSkill))]
-        public ActionResult GetSkill(ApiVersion version, int id)
-        {
-            var skill = mapper.Map<SkillDto>(skillService.GetById(id));
-
-            if (skill == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(ExpandSingleSkill(skill, version));
-        }
-
-        [HttpGet]
         [Route("active", Name = nameof(GetActiveSkills))]
         public ActionResult GetActiveSkills(ApiVersion version, [FromQuery] QueryParameters queryParameters)
         {
@@ -64,31 +50,11 @@
 
             var links = CreateLinksForCollection(queryParameters, skillsCount, version);
 
-            var toReturn = skillsDto.Select(x => ExpandSingleSkill(x, version));
-
             return Ok(new
             {
-                value = toReturn,
+                value = skillsDto,
                 links = links
             });
-        }
-
-        private dynamic ExpandSingleSkill(SkillDto skill, ApiVersion version)
-        {
-            var links = GetLinks(skill.Id, version);
-            var resourceToReturn = skill.ToDynamic() as IDictionary<string, object>;
-            resourceToReturn.Add("links", links);
-
-            return resourceToReturn;
-        }
-
-        private IEnumerable<LinkDto> GetLinks(int id, ApiVersion version)
-        {
-            var links = new List<LinkDto>();
-            var getLink = urlHelper.Link(nameof(GetSkill), new { version = version.ToString(), id = id });
-            links.Add(new LinkDto(getLink, "self", "GET"));
-
-            return links;
         }
 
         private List<LinkDto> CreateLinksForCollection(QueryParameters queryParameters, int totalCount, ApiVersion version)
@@ -97,22 +63,25 @@
 
             links.Add(new LinkDto(urlHelper.Link(nameof(GetActiveSkills), new
             {
-                pagesize = queryParameters.PageSize,
                 page = queryParameters.Page,
-                orderby = queryParameters.OrderBy
+                pagesize = queryParameters.PageSize,
+                filtter = queryParameters.Query,
+                orderby = queryParameters.OrderBy,
             }), "self", "GET"));
 
             links.Add(new LinkDto(urlHelper.Link(nameof(GetActiveSkills), new
             {
-                pagesize = queryParameters.PageSize,
                 page = 1,
+                pagesize = queryParameters.PageSize,
+                filtter = queryParameters.Query,
                 orderby = queryParameters.OrderBy
             }), "first", "GET"));
 
             links.Add(new LinkDto(urlHelper.Link(nameof(GetActiveSkills), new
             {
-                pagesize = queryParameters.PageSize,
                 page = queryParameters.GetTotalPages(totalCount),
+                pagesize = queryParameters.PageSize,
+                filtter = queryParameters.Query,
                 orderby = queryParameters.OrderBy
             }), "last", "GET"));
 
@@ -120,8 +89,9 @@
             {
                 links.Add(new LinkDto(urlHelper.Link(nameof(GetActiveSkills), new
                 {
-                    pagesize = queryParameters.PageSize,
                     page = queryParameters.Page + 1,
+                    pagesize = queryParameters.PageSize,
+                    filtter = queryParameters.Query,
                     orderby = queryParameters.OrderBy
                 }), "next", "GET"));
             }
@@ -130,8 +100,9 @@
             {
                 links.Add(new LinkDto(urlHelper.Link(nameof(GetActiveSkills), new
                 {
-                    pagesize = queryParameters.PageSize,
                     page = queryParameters.Page - 1,
+                    pagesize = queryParameters.PageSize,
+                    filtter = queryParameters.Query,
                     orderby = queryParameters.OrderBy
                 }), "previous", "GET"));
             }

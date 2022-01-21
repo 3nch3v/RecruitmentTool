@@ -6,8 +6,6 @@
     {
         int ActiveCount();
 
-        Skill GetById(int id);
-
         ICollection<Skill> GetAllActive<T>(T queryParameters);
     }
 }

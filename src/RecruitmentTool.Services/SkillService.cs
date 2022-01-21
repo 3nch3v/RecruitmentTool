@@ -33,19 +33,30 @@
         {
             var queryParams = mapper.Map<QueryParams>(queryParameters);
 
-            var allSkills = dbContext.Skills
+            var activeSkillsQuery = dbContext.Skills
                 .Where(x => x.Candidates.Count > 0)
-                .OrderBy(queryParams.OrderBy, queryParams.IsDescending)
+                .AsQueryable();
+
+            if (queryParams.HasQuery)
+            {
+                activeSkillsQuery = activeSkillsQuery
+                    .Where($"Name = @0", $"{queryParams.PropertyValue}")
+                    .AsQueryable();
+            }
+
+            if (!string.IsNullOrWhiteSpace(queryParams.OrderBy))
+            {
+                activeSkillsQuery = activeSkillsQuery
+                    .OrderBy(queryParams.OrderByProp, queryParams.IsDescending)
+                    .AsQueryable();
+            }
+                
+            var toReturn = activeSkillsQuery
                 .Skip((queryParams.Page - 1) * queryParams.PageSize)
                 .Take(queryParams.PageSize)
                 .ToList();
 
-            return allSkills;
-        }
-
-        public Skill GetById(int id)
-        {
-            return dbContext.Skills.FirstOrDefault(x => x.Id == id);
+            return toReturn;
         }
     }
 }

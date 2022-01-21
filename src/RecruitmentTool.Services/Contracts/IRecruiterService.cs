@@ -6,8 +6,6 @@
     {
         int Count();
 
-        Recruiter GetById(string id);
-
-        ICollection<Recruiter> GetAllWithCandidates<T>(T queryParameters);
+        ICollection<Recruiter> GetRecruiters<T>(T queryParameters);
     }
 }

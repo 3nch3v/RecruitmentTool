@@ -9,6 +9,7 @@
     using RecruitmentTool.WebApi.Infrastructure.ServiceExtensions;
     using RecruitmentTool.WebApi.Models;
     using RecruitmentTool.WebApi.Models.Dtos.Skills;
+    using RecruitmentTool.WebApi.Infrastructure.ControllerHelpers;
 
     [ApiController]
     [ApiVersion("1.0")]
@@ -30,6 +31,20 @@
         }
 
         [HttpGet]
+        [Route("{id:int}", Name = nameof(GetSkill))]
+        public ActionResult GetSkill(ApiVersion version, int id)
+        {
+            var skill = mapper.Map<SkillDto>(skillService.GetById(id));
+
+            if (skill == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(ExpandSingleSkill(skill, version));
+        }
+
+        [HttpGet]
         [Route("active", Name = nameof(GetActiveSkills))]
         public ActionResult GetActiveSkills(ApiVersion version, [FromQuery] QueryParameters queryParameters)
         {
@@ -48,66 +63,30 @@
 
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
 
-            var links = CreateLinksForCollection(queryParameters, skillsCount, version);
+            var links = LinksForCollection.Create(urlHelper, queryParameters, version, skillsCount, nameof(GetActiveSkills));
+
+            var toReturn = skillsDto.Select(skill => ExpandSingleSkill(skill, version));
 
             return Ok(new
             {
-                value = skillsDto,
+                value = toReturn,
                 links = links
             });
         }
 
-        private List<LinkDto> CreateLinksForCollection(QueryParameters queryParameters, int totalCount, ApiVersion version)
+        private dynamic ExpandSingleSkill(SkillDto skill, ApiVersion version)
         {
-            var links = new List<LinkDto>();
+            var links = LinksForSigle.Create(
+                urlHelper,
+                version,
+                skill.Id.ToString(), 
+                "skill",
+                nameof(GetSkill));
 
-            links.Add(new LinkDto(urlHelper.Link(nameof(GetActiveSkills), new
-            {
-                page = queryParameters.Page,
-                pagesize = queryParameters.PageSize,
-                filtter = queryParameters.Query,
-                orderby = queryParameters.OrderBy,
-            }), "self", "GET"));
+            var resourceToReturn = skill.ToDynamic() as IDictionary<string, object>;
+            resourceToReturn.Add("links", links);
 
-            links.Add(new LinkDto(urlHelper.Link(nameof(GetActiveSkills), new
-            {
-                page = 1,
-                pagesize = queryParameters.PageSize,
-                filtter = queryParameters.Query,
-                orderby = queryParameters.OrderBy
-            }), "first", "GET"));
-
-            links.Add(new LinkDto(urlHelper.Link(nameof(GetActiveSkills), new
-            {
-                page = queryParameters.GetTotalPages(totalCount),
-                pagesize = queryParameters.PageSize,
-                filtter = queryParameters.Query,
-                orderby = queryParameters.OrderBy
-            }), "last", "GET"));
-
-            if (queryParameters.HasNext(totalCount))
-            {
-                links.Add(new LinkDto(urlHelper.Link(nameof(GetActiveSkills), new
-                {
-                    page = queryParameters.Page + 1,
-                    pagesize = queryParameters.PageSize,
-                    filtter = queryParameters.Query,
-                    orderby = queryParameters.OrderBy
-                }), "next", "GET"));
-            }
-
-            if (queryParameters.HasPrevious())
-            {
-                links.Add(new LinkDto(urlHelper.Link(nameof(GetActiveSkills), new
-                {
-                    page = queryParameters.Page - 1,
-                    pagesize = queryParameters.PageSize,
-                    filtter = queryParameters.Query,
-                    orderby = queryParameters.OrderBy
-                }), "previous", "GET"));
-            }
-
-            return links;
+            return resourceToReturn;
         }
     }
 }

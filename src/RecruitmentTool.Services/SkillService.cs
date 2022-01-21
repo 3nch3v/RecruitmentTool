@@ -29,6 +29,11 @@
                 .Count();
         }
 
+        public Skill GetById(int id)
+        {
+            return dbContext.Skills.FirstOrDefault(x => x.Id == id);
+        }
+
         public ICollection<Skill> GetAllActive<T>(T queryParameters)
         {
             var queryParams = mapper.Map<QueryParams>(queryParameters);

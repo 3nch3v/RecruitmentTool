@@ -9,6 +9,7 @@
     using RecruitmentTool.WebApi.Infrastructure.ServiceExtensions;
     using RecruitmentTool.WebApi.Models;
     using RecruitmentTool.WebApi.Models.Dtos.Candidate;
+    using RecruitmentTool.WebApi.Infrastructure.ControllerHelpers;
 
     [ApiController]
     [ApiVersion("1.0")]
@@ -49,19 +50,20 @@
         [Route("{id}", Name = nameof(GetCandidate))]
         public ActionResult GetCandidate(ApiVersion version, string id)
         {
-            var candidate = mapper.Map<CandidateDto>(candidateService.GetById(id));
+            var candidateDto = mapper.Map<CandidateDto>(candidateService.GetById(id));
 
-            if (candidate == null)
+            if (candidateDto == null)
             {
                 return NotFound();
             }
 
-            return Ok(ExpandSingleCandidate(candidate, version));
+            var toReturn = ExpandSingleCandidate(candidateDto, version);
+
+            return Ok(toReturn);
         }
 
         [HttpGet(Name = nameof(GetAllCandidates))]
-        public ActionResult GetAllCandidates(
-            ApiVersion version, [FromQuery] QueryParameters queryParameters)
+        public ActionResult GetAllCandidates(ApiVersion version, [FromQuery] QueryParameters queryParameters)
         {
             var candidates = candidateService.GetAll(queryParameters);
             var candidatesDto = mapper.Map<ICollection<CandidateDto>>(candidates);
@@ -78,9 +80,16 @@
 
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
 
-            var links = CreateLinksForCollection(queryParameters, candidateCount, version);
+            var links = LinksForCollection.Create(
+                urlHelper, 
+                queryParameters, 
+                version, 
+                candidateCount, 
+                nameof(GetAllCandidates), 
+                nameof(AddCandidate), 
+                "candidate");
 
-            var toReturn = candidatesDto.Select(x => ExpandSingleCandidate(x, version));
+            var toReturn = candidatesDto.Select(candidate => ExpandSingleCandidate(candidate, version));
 
             return Ok(new
             {
@@ -156,103 +165,22 @@
             return Ok(mapper.Map<CandidateDto>(existingCandidate));
         }
 
-        private List<LinkDto> CreateLinksForCollection(QueryParameters queryParameters, int totalCount, ApiVersion version)
-        {
-            var links = new List<LinkDto>();
-
-            links.Add(new LinkDto(urlHelper.Link(nameof(GetAllCandidates), new
-            {
-                page = queryParameters.Page,
-                pagesize = queryParameters.PageSize,
-                filtter = queryParameters.Query,
-                orderby = queryParameters.OrderBy
-            }), "self", "GET"));
-
-            links.Add(new LinkDto(urlHelper.Link(nameof(GetAllCandidates), new
-            {
-                page = 1,
-                pagesize = queryParameters.PageSize,
-                filtter = queryParameters.Query,
-                orderby = queryParameters.OrderBy
-            }), "first", "GET"));
-
-            links.Add(new LinkDto(urlHelper.Link(nameof(GetAllCandidates), new
-            {
-                page = queryParameters.GetTotalPages(totalCount),
-                pagesize = queryParameters.PageSize,
-                filtter = queryParameters.Query,
-                orderby = queryParameters.OrderBy
-            }), "last", "GET"));
-
-            if (queryParameters.HasNext(totalCount))
-            {
-                links.Add(new LinkDto(urlHelper.Link(nameof(GetAllCandidates), new
-                {
-                    page = queryParameters.Page + 1,
-                    pagesize = queryParameters.PageSize,
-                    filtter = queryParameters.Query,
-                    orderby = queryParameters.OrderBy
-                }), "next", "GET"));
-            }
-
-            if (queryParameters.HasPrevious())
-            {
-                links.Add(new LinkDto(urlHelper.Link(nameof(GetAllCandidates), new
-                {
-                    page = queryParameters.Page - 1,
-                    pagesize = queryParameters.PageSize,
-                    filtter = queryParameters.Query,
-                    orderby = queryParameters.OrderBy
-                }), "previous", "GET"));
-            }
-
-            var posturl = urlHelper.Link(nameof(AddCandidate), new { version = version.ToString() });
-
-            links.Add(new LinkDto(posturl, "create_candidate", "POST"));
-
-            return links;
-        }
-
         private dynamic ExpandSingleCandidate(CandidateDto candidate, ApiVersion version)
         {
-            var links = GetLinks(candidate.Id, version);
+            var links = LinksForSigle.Create(
+                urlHelper,
+                version,
+                candidate.Id,
+                "candidate",
+                nameof(GetCandidate),
+                nameof(AddCandidate),
+                nameof(UpdateCandidate),
+                nameof(PartiallyUpdateCandidate),
+                nameof(RemoveCandidate));
+
             var resourceToReturn = candidate.ToDynamic() as IDictionary<string, object>;
             resourceToReturn.Add("links", links);
-
             return resourceToReturn;
-        }
-
-        private IEnumerable<LinkDto> GetLinks(string id, ApiVersion version)
-        {
-            var links = new List<LinkDto>();
-
-            var getLink = urlHelper.Link(nameof(GetCandidate), new { version = version.ToString(), id = id });
-
-            links.Add(
-              new LinkDto(getLink, "self", "GET"));
-
-            var createLink = urlHelper.Link(nameof(AddCandidate), new { version = version.ToString() });
-
-            links.Add(
-              new LinkDto(createLink,
-              "create_candidate",
-              "POST"));
-
-            var updateLink = urlHelper.Link(nameof(UpdateCandidate), new { version = version.ToString(), id = id });
-
-            links.Add(
-               new LinkDto(updateLink,
-               "update_candidate",
-               "PUT"));
-
-            var deleteLink = urlHelper.Link(nameof(RemoveCandidate), new { version = version.ToString(), id = id });
-
-            links.Add(
-              new LinkDto(deleteLink,
-              "delete_candidate",
-              "DELETE"));
-
-            return links;
         }
     }
 }

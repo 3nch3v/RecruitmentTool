@@ -3,6 +3,7 @@
 ## Candidate
 
 ### Schema:
+```
 {
   "firstName": "FirstName >= 2 && FirstName  <= 50",
   "lastName": "LastName >= 2 && LastName <= 50",
@@ -20,7 +21,7 @@
     }
   ]
 }
-
+```
 | Method | Request URL                           |
 | -------|:-------------------------------------:|
 | POST   | {host}/api/v{version}/candidates      |
@@ -41,6 +42,7 @@ Queries:
 
 Example: https://localhost:7065/api/v1/candidates?Page=1&PageSize=10&Query=FirstName_Ivan&OrderBy=LastName_Descending
 Response:
+```
 {
   "value": [
     {
@@ -125,6 +127,7 @@ Response:
     }
   ]
 }
+```
 
 ## Interviews
 When we create a job, an interview with a suitable candidate will be created automatically. A suitable candidate is one who has at least one skill required by the job. 
@@ -140,6 +143,7 @@ Queries:
 •	OrderBy= Date_{}
 
 Example:  https://localhost:7065/api/v1/ intervies?Page=1&PageSize=10&Query= Date _2022-01-28T01:30:00&OrderBy=Date_Desc
+```
 {
   "value": [
     {
@@ -185,6 +189,7 @@ Example:  https://localhost:7065/api/v1/ intervies?Page=1&PageSize=10&Query= Dat
 	       PAGANATION LINKS
   ]
 }
+```
 
 ## Recruiters
 
@@ -234,6 +239,7 @@ Example: https://localhost:7065/api/v1/skills/active?Page=1&OrderBy=Name_Desc&Pa
 * *delete all interviews for this job and free up the slots of the recruiters responsible for it.*
 
 Example: https://localhost:7065/api/v1/jobs?Page=1&Query=Title_Developer&OrderBy=Salary_Desc&PageSize=10
+```
 {
   "value": [
     {
@@ -252,3 +258,4 @@ Example: https://localhost:7065/api/v1/jobs?Page=1&Query=Title_Developer&OrderBy
 	             PAGANATION LINKS
   ]
 }
+```

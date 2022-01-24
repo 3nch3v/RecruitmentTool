@@ -35,10 +35,10 @@
 * *Method PATCH allows partial update.*
 
 Queries: 
-•	Page={1}
-•	PageSize={10} (max size by default 50)
-•	Query={PropertyName}_{PropertyValue}
-•	OrderBy= {PropertyName}_{Asc/Desc}
++ Page={1}
++ PageSize={10} (max size by default 50)
++ Query={PropertyName}_{PropertyValue}
++ OrderBy= {PropertyName}_{Asc/Desc}
 
 Example: https://localhost:7065/api/v1/candidates?Page=1&PageSize=10&Query=FirstName_Ivan&OrderBy=LastName_Descending
 Response:
@@ -137,10 +137,10 @@ When we create a job, an interview with a suitable candidate will be created aut
 | GET    | {host}/api/v{version}/intervies   |
 
 Queries: 
-•	Page={1}
-•	PageSize={10} (max size by default 50)
-•	Query=Date_{SameDate}
-•	OrderBy= Date_{}
++ Page={1}
++ PageSize={10} (max size by default 50)
++ Query=Date_{SameDate}
++ OrderBy= Date_{}
 
 Example:  https://localhost:7065/api/v1/ intervies?Page=1&PageSize=10&Query= Date _2022-01-28T01:30:00&OrderBy=Date_Desc
 ```
@@ -198,10 +198,10 @@ Example:  https://localhost:7065/api/v1/ intervies?Page=1&PageSize=10&Query= Dat
 | GET    | {host}/api/v{version}/recruiters  |
 
 Queries: 
-•	Page={1}
-•	PageSize={10} (max size by default 50)
-•	Query=ExperienceLevel_{int >= 1 }
-•	OrderBy= {LastName/Email/Country/ExperienceLevel }_{Asc/Desc}
++ Page={1}
++ PageSize={10} (max size by default 50)
++ Query=ExperienceLevel_{int >= 1 }
++ OrderBy= {LastName/Email/Country/ExperienceLevel }_{Asc/Desc}
 
 Example: https://localhost:7065/api/v1/recruiters?Page=1&Query=ExperienceLevel_4&OrderBy=LastName_Desc&PageSize=10
 
@@ -219,6 +219,7 @@ Example: https://localhost:7065/api/v1/skills/active?Page=1&OrderBy=Name_Desc&Pa
 ## Jobs
 
 ### Schema:
+```
 {
   "title": "Title >= 2 && Title <= 100",
   "description": "Description >= 20 && Description <= 2000",
@@ -229,6 +230,7 @@ Example: https://localhost:7065/api/v1/skills/active?Page=1&OrderBy=Name_Desc&Pa
     }
   ]
 }
+```
 
 | Method | Request URL                      |
 | -------|:--------------------------------:|

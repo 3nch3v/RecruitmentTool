@@ -76,7 +76,7 @@
         public ICollection<Candidate> GetAll<T>(T queryParameters)
         {
             var queryParams = mapper.Map<QueryParams>(queryParameters);
-
+            
             var candidates = dbContext.Candidates.AsQueryable();
 
             if (queryParams.HasQuery)

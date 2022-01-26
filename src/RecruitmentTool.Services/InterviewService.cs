@@ -34,7 +34,7 @@
             if (queryParams.HasQuery)
             {
                 interviesQuery = interviesQuery
-                    .Where($"{queryParams.PropertyName} = @0", $"{queryParams.PropertyValue}")
+                    .Where($"Date = @0", $"{queryParams.PropertyValue}")
                     .AsQueryable();
             }
 

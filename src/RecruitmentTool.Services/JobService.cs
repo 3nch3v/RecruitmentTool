@@ -118,16 +118,21 @@
                 .Where(candidate => candidate.Skills.Any(skill => jobSkillsIds.Contains(skill.Id)))
                 .ToList();
 
+            var dateTimeNow = DateTime.Now;
+            var date = new DateTime(dateTimeNow.Year, dateTimeNow.Month, dateTimeNow.Day + 7, dateTimeNow.Hour, dateTimeNow.Minute, 0);
+
             foreach (var candidate in candidates)
             {
                 if (candidate.Recruiter.Interviews.Count() < 5)
                 {
+                    date.AddMinutes(15);
+
                     var interview = new Interview
                     {
                         JobId = id,
                         CandidateId = candidate.Id,
                         RecruiterId = candidate.RecruiterId,
-                        Date = DateTime.Now.AddDays(7),
+                        Date = date,
                     };
 
                     candidate.Recruiter.ExperienceLevel++;

@@ -4,7 +4,8 @@
 
     public class BirthDateAttribute : ValidationAttribute
     {
-        private readonly DateTime earliestDate = DateTime.Now.AddYears(-100);
+        private readonly DateTime earliestDate = DateTime.Now.AddYears(-99);
+        private readonly DateTime latestDate = DateTime.Now.AddYears(-18);
 
         public string GetErrorMessage => "Invalid Birth date.";
 
@@ -17,9 +18,10 @@
 
                 if (successfullyParsed)
                 {
-                    int result = DateTime.Compare(earliestDate, birthdate);
+                    int tooOld = DateTime.Compare(earliestDate, birthdate);
+                    int tooYoung = DateTime.Compare(birthdate, latestDate);
 
-                    if (result >= 0)
+                    if (tooOld >= 0 || tooYoung > 0)
                     {
                         return new ValidationResult(this.GetErrorMessage);
 
